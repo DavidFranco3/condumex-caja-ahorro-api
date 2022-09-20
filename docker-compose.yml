@@ -1,0 +1,20 @@
+version: '3'
+services:
+  database:
+    image: 'mongo:5.0.9'
+    container_name: 'mongo-caja-ahorro-container'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=caja-de-ahorros-local
+    volumes:
+      - './init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro'
+      - './mongo-volume:/data/db'
+    ports:
+      - '27017-27019:27017-27019'
+    restart: always
+    networks:
+      - caja-ahorro-network
+networks:
+  caja-ahorro-network:
+    driver: bridge
