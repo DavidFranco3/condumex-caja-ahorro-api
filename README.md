@@ -8,52 +8,38 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 
 ### Pre-requisitos 📋
 
-_Que cosas necesitas para instalar el software_
+_Que cosas necesitas para instalar el software y como instalarlas_
 
-- [Git](https://git-scm.com/downloads)
-- [Node.js](https://nodejs.org/en/)
-- [Visual Studio Code](https://code.visualstudio.com/)
-- _(Opcional)_[Docker](https://www.docker.com/products/docker-desktop)
-- _(Opcional)_[Docker Compose](https://docs.docker.com/compose/install/)
+* Necesitarás  instalar el siguiente software para la ejecución de este codigo.
+* [EXPRESSJS](https://expressjs.com/es/)
+* Un editor de código como [Visual Studio Code](https://code.visualstudio.com/)
 
-## Clonar proyecto 📁
+## Despliegue 📦
 
-```sh
-git clone https://github.com/Gerencia-Isotech/api-caja-ahorro-condumex.git
-cd api-caja-ahorro-condumex
-```
+Para el despliegue local, en el directorio del proyecto, puede ejecutar:
 
-Instalar dependencias
+### `npm run dev`
 
-```sh
-npm install
-```
+Ejecuta la aplicación.
 
-o
+Mostrará en consola cada una de las peticiones que reciba.
 
-```sh
-yarn
-```
+### `vercel --prod`
 
-Ejectuar el servidor
+Deploy en producción.
 
-```sh
-npm run dev
-```
+Hará deploy de la API en la plataforma de vercel
 
-_Opcional ejecutar contenedor con mongo db_
 
-```sh
-npm run docker:db
-```
+### `npm start`
+
+Inicia el servidor en modo de escucha en el puerto que le sea asignado
+
 
 ## Construido con 🛠️
 
-- JavaScript
-- [EXPRESSJS](https://expressjs.com/es/)
-- [MONGODB](https://www.mongodb.com/)
+* [EXPRESSJS](https://expressjs.com/es/) - Es un marco de aplicación web de back-end para Node.js, lanzado como software gratuito y de código abierto bajo la licencia MIT. Está diseñado para crear aplicaciones web y API.
 
 ## Autor ✒️
 
 * **José David Ayala Franco** - *Programación* - [David-Franco](https://github.com/DavidFranco3)
-
