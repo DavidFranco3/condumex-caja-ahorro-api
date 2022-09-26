@@ -93,6 +93,16 @@ router.get("/obtenerxFicha/:ficha", verifyToken, async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
+// Obtener un empleado segun el numero de ficha
+router.get("/obtenerNombrexFicha/:ficha", verifyToken, async (req, res) => {
+  const { ficha } = req.params;
+
+  await empleados
+    .findOne({ ficha: parseInt(ficha) })
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
+});
+
 // Buscar coincidencias en nombre
 router.get("/obtenerxCoincidenciasNombre/:coincidencia", verifyToken, async (req, res) => {
     const { coincidencia } = req.params;

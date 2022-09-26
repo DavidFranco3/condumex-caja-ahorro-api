@@ -93,6 +93,16 @@ router.get("/obtenerxFicha/:ficha", verifyToken, async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
+// Obtener un socio sindicalizado segun el numero de ficha
+router.get("/obtenerNombrexFicha/:ficha", verifyToken, async (req, res) => {
+  const { ficha } = req.params;
+
+  await sindicalizados
+    .findOne({ ficha: parseInt(ficha) })
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
+});
+
 // route to get the empleado by tipo and nombre
 router.get("/obtenerByNombre", verifyToken, async (req, res) => {
   const { nombre } = req.query;

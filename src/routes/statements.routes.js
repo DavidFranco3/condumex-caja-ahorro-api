@@ -363,13 +363,13 @@ router.get("/email/:fichaSocio", verifyToken, async (req, res) => {
       port: 465,
       secure: true,
       auth: {
-        user: "ca.condutel@condumex.com.mx",
+        user: "ca.condumex@condumex.com.mx",
         pass: "C4j4dahorro",
       },
     });
 
     const mailOptions = {
-      from: "CONDUMEX CAJA DE AHORRO <ca.condutel@condumex.com.mx>",
+      from: "CONDUMEX CAJA DE AHORRO <ca.condumex@condumex.com.mx>",
       to: associate.correo,
       subject: "Estado de cuenta",
       text: "Estado de cuenta",
