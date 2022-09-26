@@ -53,10 +53,7 @@ npm run docker:db
 - [EXPRESSJS](https://expressjs.com/es/)
 - [MONGODB](https://www.mongodb.com/)
 
-## Autores ✒️
+## Autor ✒️
 
 * **José David Ayala Franco** - *Programación* - [David-Franco](https://github.com/DavidFranco3)
-
----
-⌨️ con ❤️ por [David-Franco](https://github.com/DavidFranco3) para ISOTECH 😊
 
