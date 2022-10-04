@@ -33,3 +33,4 @@ mongod.lock
 .bypy.json.lock
 
 /mongo-volume
+/nbproject/private/

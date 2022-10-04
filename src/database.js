@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // Credenciales para conexion local a la BD
-const URI = "mongodb://David:123456@localhost:27017/caja-de-ahorro";
+const URI = "mongodb://David:123456@127.0.0.1/caja-de-ahorro";
 
 // Credenciales para conexion a Mongo Atlas
 //const URI ="mongodb+srv://caja-de-ahorro:pVgzXxPMG2RU15Is@cluster0.dsbmu.mongodb.net/caja-de-ahorro";
