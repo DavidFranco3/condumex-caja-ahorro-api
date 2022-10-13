@@ -397,8 +397,8 @@ router.get("/obtenerFolio", async (_req, res) => {
       .find({})
       .sort({ folio: -1 })
       .limit(1);
-    const { folio } = ultimarendimiento;
-    const nextFolio = folio + 1;
+    
+    const nextFolio = ultimarendimiento.folio + 1;
     res.status(200).json({ folio: nextFolio });
   }
 });

@@ -9,7 +9,7 @@ const prestamos = new Schema(
     prestamo: { type: mongoose.Decimal128, required: true },
     prestamoTotal: { type: mongoose.Decimal128, required: true },
     tasaInteres: { type: mongoose.Decimal128, required: true },
-    createDate: { type: Date, required: true },
+    createDate: { type: Date },
   },
   {
     timestamps: true,

@@ -17,16 +17,7 @@ const empleados = new Schema(
 
 empleados.set("toJSON", {
   transform: (_document, returnedObject) => {
-    returnedObject.ficha = returnedObject.ficha;
-    returnedObject.nombre = returnedObject.nombre;
-    returnedObject.tipo = returnedObject.tipo;
-    returnedObject.correo = returnedObject.correo;
-    returnedObject.estado = returnedObject.estado;
-    returnedObject.fechaCreacion =
-      returnedObject.createDate || returnedObject.createdAt;
-    returnedObject.fechaActualizacion = returnedObject.updatedAt;
-        
-        delete returnedObject.__v;
+    delete returnedObject.__v;
   },
 });
 

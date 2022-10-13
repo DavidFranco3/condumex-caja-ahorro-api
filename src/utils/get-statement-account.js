@@ -92,8 +92,8 @@ async function getStatementAccount(associate) {
         total: abonosTotal,
       },
       balances: {
-        balancePositive: aportacionesTotal + patrimonioTotal + rendimientosTotal,
-        negativeBalance: prestamosTotal - abonosTotal,
+        balancePositive: parseFloat(aportacionesTotal + patrimonioTotal + rendimientosTotal),
+        negativeBalance: parseFloat(prestamosTotal - abonosTotal),
       },
     };
   } catch (error) {

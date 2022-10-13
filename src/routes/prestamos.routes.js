@@ -108,6 +108,16 @@ router.get("/listar", async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
+// Obtener todos los abonos
+router.get("/listar2", async (req, res) => {
+  const { tipo } = req.query;
+    await prestamos
+    .find({ tipo })
+    .sort({ _id: -1 })
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
+});
+
 // Obtener el numero total de registros de prestamos
 router.get("/numeroPrestamos", async (req, res) => {
   await prestamos
@@ -203,6 +213,16 @@ router.get("/obtenerxFicha/:fichaSocio", async (req, res) => {
 
   await prestamos
     .findOne({ fichaSocio })
+    .then((data) => res.json(data))
+    .catch((error) => res.json({ message: error }));
+});
+
+// Obtener un socio segun el numero de ficha
+router.get("/obtenerxFecha", async (req, res) => {
+  const { fecha } = req.params;
+
+  await prestamos
+     .find({ createdAt: { $gte: new Date(fecha+'T00:00:00.000Z'), $lte: new Date(fecha+'T23:59:59.999Z') } })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
