@@ -430,7 +430,7 @@ router.get("/email/:fichaSocio", verifyToken, async (req, res) => {
     });
 
     return res.status(200).json({
-      message: "El estado de cuenta fue enviado a su correo",
+      message: "El estado de cuenta fue enviado al correo del cliente",
     });
   } catch (err) {
     console.error(err);
