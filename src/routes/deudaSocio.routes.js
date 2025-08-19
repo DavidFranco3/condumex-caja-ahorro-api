@@ -101,8 +101,8 @@ router.post("/registro", async (req, res) => {
 // Obtener todos las deudas
 router.get("/listar", async (req, res) => {
   const { tipo, inicio, fin } = req.query;
-    await deudaSocio
-    .find({ tipo, createdAt: { $gte: new Date(inicio+'T00:00:00.000Z'), $lte: new Date(fin+'T23:59:59.999Z') } })
+  await deudaSocio
+    .find({ tipo, createdAt: { $gte: new Date(inicio + 'T00:00:00.000Z'), $lte: new Date(fin + 'T23:59:59.999Z') } })
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -110,7 +110,7 @@ router.get("/listar", async (req, res) => {
 
 router.get("/listarDeudaSocio", async (req, res) => {
   const { tipo } = req.query;
-    await deudaSocio
+  await deudaSocio
     .find({ tipo })
     .sort({ _id: -1 })
     .then((data) => res.json(data))
@@ -119,32 +119,34 @@ router.get("/listarDeudaSocio", async (req, res) => {
 
 router.get("/listarPeriodo", async (req, res) => {
   const { tipo, periodo } = req.query;
-    await deudaSocio
+  await deudaSocio
     .find({ tipo, periodo })
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
 
-// Obtener el numero total de registros de deudas
-router.get("/numeroDeudas", async (req, res) => {
-  await deudaSocio
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+// Obtener el número total de registros de deudas
+router.get("/numeroDeudas", async (_req, res) => {
+  try {
+    const totalDeudas = await deudaSocio.countDocuments();
+    res.json(totalDeudas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el número de deudas" });
+  }
 });
 
-// Obtener el total de registros de cada razon social
+// Obtener el total de registros por tipo
 router.get("/totalxTipo", async (req, res) => {
-  const { tipo } = req.query;
-  await deudaSocio
-    .find({ tipo })
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const { tipo } = req.query;
+    const totalPorTipo = await deudaSocio.countDocuments({ tipo });
+    res.json(totalPorTipo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total por tipo" });
+  }
 });
 
 // Listar paginando las deudas
@@ -178,17 +180,20 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 });
 
 // Obtener el numero de folio actual
-router.get("/obtenerFolio", async (req, res) => {
-  const registrodeudas = await deudaSocio.find().count();
-  if (registrodeudas === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimaDeuda] = await deudaSocio
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+router.get("/obtenerFolio", async (_req, res) => {
+  try {
+    const registrodeudas = await deudaSocio.countDocuments();
+    if (registrodeudas === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimaDeuda = await deudaSocio.findOne({}).sort({ folio: -1 });
     const tempFolio = ultimaDeuda.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el folio" });
   }
 });
 
@@ -222,7 +227,7 @@ router.delete("/eliminar/:id", async (req, res) => {
 
 // Actualizar datos del usuario
 router.put("/actualizar/:id", async (req, res) => {
-   const { id } = req.params;
+  const { id } = req.params;
   const { abonoTotal, prestamoTotal, movimiento, createdAt } = req.body;
 
   // find patrimonio by id
@@ -242,7 +247,7 @@ router.put("/actualizar/:id", async (req, res) => {
         createDate: createdAt,
       },
     })
-    .then((_data) => res.status(200).json({message: "Deuda actualizada" }))
+    .then((_data) => res.status(200).json({ message: "Deuda actualizada" }))
     .catch((error) => res.json({ message: error }));
 });
 

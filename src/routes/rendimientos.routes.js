@@ -334,23 +334,27 @@ router.get("/listarPeriodo", async (_req, res) => {
 });
 
 // Obtener el numero total de registros de rendimientos
+// Obtener el número total de rendimientos
 router.get("/numerorendimientos", async (_req, res) => {
-  await rendimientos
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const totalRendimientos = await rendimientos.countDocuments();
+    res.json(totalRendimientos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el número de rendimientos" });
+  }
 });
 
-// Obtener el total de registros de cada razon social
+// Obtener el total de registros por tipo
 router.get("/totalxTipo", async (req, res) => {
-  const { tipo } = req.query;
-  await rendimientos
-    .find({ tipo })
-    .count()
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const { tipo } = req.query;
+    const totalPorTipo = await rendimientos.countDocuments({ tipo });
+    res.json(totalPorTipo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total por tipo" });
+  }
 });
 
 // Listar paginando los rendimientos
@@ -387,20 +391,23 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 
 // Obtener el numero de folio actual
 router.get("/obtenerFolio", async (_req, res) => {
-  const registrorendimientos = await rendimientos.find().count();
+  try {
+    const count = await rendimientos.countDocuments();
 
-  if (registrorendimientos === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimarendimiento] = await rendimientos
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+    if (count === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
 
+    const ultimarendimiento = await rendimientos.findOne({}).sort({ folio: -1 });
     const nextFolio = ultimarendimiento.folio + 1;
+
     res.status(200).json({ folio: nextFolio });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el folio" });
   }
 });
+
 
 // Obtener un rendimiento en especifico
 router.get("/obtener/:id", async (req, res) => {

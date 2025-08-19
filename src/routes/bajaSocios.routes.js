@@ -89,25 +89,28 @@ router.get("/listarPeriodo", async (req, res) => {
 });
 
 // Obtener el numero total de registros de baja de socios
-router.get("/numeroBajas", async (req, res) => {
-  await bajaSocios
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+router.get("/numeroBajas", async (_req, res) => {
+  try {
+    const totalBajas = await bajaSocios.countDocuments();
+    res.json(totalBajas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el número de bajas" });
+  }
 });
 
-// Obtener el total de registros de cada razon social
+// Obtener el total de registros por tipo
 router.get("/totalxTipo", async (req, res) => {
-  const { tipo } = req.query;
-  await bajaSocios
-    .find({ tipo })
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const { tipo } = req.query;
+    const totalPorTipo = await bajaSocios.countDocuments({ tipo });
+    res.json(totalPorTipo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total por tipo" });
+  }
 });
+
 
 // Listar paginando los registros de bajas de socios
 router.get("/listarPaginando", async (req, res) => {
@@ -142,16 +145,23 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 });
 
 // Obtener el numero de folcio actual
-router.get("/obtenerFolio", async (req, res) => {
-  const registrobajaSocios = await bajaSocios.find().count();
-  if (registrobajaSocios === 0) {
-    res.status(200).json({ folio: "1" });
-  } else {
-    const ultimaBaja = await bajaSocios.findOne().sort({ _id: -1 });
+router.get("/obtenerFolio", async (_req, res) => {
+  try {
+    const registrobajaSocios = await bajaSocios.countDocuments();
+    if (registrobajaSocios === 0) {
+      return res.status(200).json({ folio: "1" });
+    }
+
+    const ultimaBaja = await bajaSocios.findOne({}).sort({ folio: -1 });
     const tempFolio = parseInt(ultimaBaja.folio) + 1;
+
     res.status(200).json({ folio: tempFolio.toString() });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el folio" });
   }
 });
+
 
 // Obtener una baja en especifico
 router.get("/obtener/:id", async (req, res) => {

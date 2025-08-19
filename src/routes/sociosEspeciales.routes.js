@@ -35,14 +35,15 @@ router.get("/listar", verifyToken, async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
-// Obtener el numero total de registros de socios socios especiales
-router.get("/total", verifyToken, async (req, res) => {
-  await sociosEspeciales
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+// Obtener el número total de socios especiales
+router.get("/total", verifyToken, async (_req, res) => {
+  try {
+    const totalSociosEspeciales = await sociosEspeciales.countDocuments();
+    res.json(totalSociosEspeciales);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total de socios especiales" });
+  }
 });
 
 // Listar paginando los socios socios especiales
@@ -62,14 +63,20 @@ router.get("/listarPaginando", async (req, res) => {
 });
 
 // Obtener el numero de ficha actual
-router.get("/obtenerFicha", verifyToken, async (req, res) => {
-  const registrosociosEspeciales = await sociosEspeciales.find().count();
-  if (registrosociosEspeciales === 0) {
-    res.status(200).json({ ficha: "1" });
-  } else {
-    const ultimo = await sociosEspeciales.findOne().sort({ _id: -1 });
+router.get("/obtenerFicha", verifyToken, async (_req, res) => {
+  try {
+    const registrosociosEspeciales = await sociosEspeciales.countDocuments();
+    if (registrosociosEspeciales === 0) {
+      return res.status(200).json({ ficha: "1" });
+    }
+
+    const ultimo = await sociosEspeciales.findOne({}).sort({ ficha: -1 });
     const tempFolio = parseInt(ultimo.ficha) + 1;
+
     res.status(200).json({ ficha: tempFolio.toString() });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener la ficha" });
   }
 });
 

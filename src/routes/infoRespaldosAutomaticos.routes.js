@@ -29,15 +29,15 @@ router.post("/registro", verifyToken, async (req, res) => {
 });
 
 // Obtener el numero total de registros de informacion de respaldos automaticos
-router.get("/total", verifyToken, async (req, res) => {
-  await infoRespaldosAutomaticos
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+router.get("/total", verifyToken, async (_req, res) => {
+  try {
+    const totalRegistros = await infoRespaldosAutomaticos.countDocuments();
+    res.json(totalRegistros);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total de registros" });
+  }
 });
-
 // Listar paginando los informacion de respaldos automaticos
 router.get("/listarPaginando", async (req, res) => {
   const { pagina, limite } = req.query;
@@ -55,16 +55,20 @@ router.get("/listarPaginando", async (req, res) => {
 });
 
 // Obtener el numero de folio actual
-router.get("/obtenerFolio", verifyToken, async (req, res) => {
-  const registroinfoRespaldosAutomaticos = await infoRespaldosAutomaticos
-    .find()
-    .count();
-  if (registroinfoRespaldosAutomaticos === 0) {
-    res.status(200).json({ folio: "1" });
-  } else {
-    const ultimo = await infoRespaldosAutomaticos.findOne().sort({ _id: -1 });
+router.get("/obtenerFolio", verifyToken, async (_req, res) => {
+  try {
+    const registroinfoRespaldosAutomaticos = await infoRespaldosAutomaticos.countDocuments();
+    if (registroinfoRespaldosAutomaticos === 0) {
+      return res.status(200).json({ folio: "1" });
+    }
+
+    const ultimo = await infoRespaldosAutomaticos.findOne({}).sort({ folio: -1 });
     const tempFolio = parseInt(ultimo.folio) + 1;
+
     res.status(200).json({ folio: tempFolio.toString() });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el folio" });
   }
 });
 

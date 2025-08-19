@@ -37,25 +37,27 @@ router.get("/listar", verifyToken, async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
-// Obtener el número total de registros de saldos de socios
-router.get("/total", verifyToken, async (req, res) => {
-  await saldoSocios
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+// Obtener el número total de saldos de socios
+router.get("/total", verifyToken, async (_req, res) => {
+  try {
+    const totalSaldos = await saldoSocios.countDocuments();
+    res.json(totalSaldos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total de saldos de socios" });
+  }
 });
 
-// Obtener el total de registros de cada razon social
+// Obtener el total de registros por tipo
 router.get("/totalxTipo/:tipo", verifyToken, async (req, res) => {
-  const { tipo } = req.params;
-  await saldoSocios
-    .find({ tipo })
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const { tipo } = req.params;
+    const totalPorTipo = await saldoSocios.countDocuments({ tipo });
+    res.json(totalPorTipo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total por tipo" });
+  }
 });
 
 // Listar paginando los saldos de los socios
@@ -91,14 +93,20 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 });
 
 // Obtener el número de folio actual
-router.get("/obtenerFolioActual", verifyToken, async (req, res) => {
-  const registrosaldoSocios = await saldoSocios.find().count();
-  if (registrosaldoSocios === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimo] = await saldoSocios.find({}).sort({ folio: -1 }).limit(1);
+router.get("/obtenerFolioActual", verifyToken, async (_req, res) => {
+  try {
+    const registrosaldoSocios = await saldoSocios.countDocuments();
+    if (registrosaldoSocios === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimo = await saldoSocios.findOne({}).sort({ folio: -1 });
     const tempFolio = ultimo.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el folio" });
   }
 });
 

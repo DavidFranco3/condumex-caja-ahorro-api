@@ -38,14 +38,15 @@ router.get("/listar", verifyToken, async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
-// Obtener el numero total de registros
-router.get("/total", verifyToken, async (req, res) => {
-  await saldosGlobales
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+// Obtener el número total de registros de saldosGlobales
+router.get("/total", verifyToken, async (_req, res) => {
+  try {
+    const totalRegistros = await saldosGlobales.countDocuments();
+    res.json(totalRegistros);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total de registros" });
+  }
 });
 
 // Listar paginando los saldos
@@ -65,17 +66,20 @@ router.get("/listarPaginando", async (req, res) => {
 });
 
 // Obtener el numero de folio
-router.get("/obtenerFolio", verifyToken, async (req, res) => {
-  const registrosaldosGlobales = await saldosGlobales.find().count();
-  if (registrosaldosGlobales === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimoMovimiento] = await saldosGlobales
-      .find()
-      .sort({ folio: -1 })
-      .limit(1);
+router.get("/obtenerFolio", verifyToken, async (_req, res) => {
+  try {
+    const registrosaldosGlobales = await saldosGlobales.countDocuments();
+    if (registrosaldosGlobales === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimoMovimiento = await saldosGlobales.findOne({}).sort({ folio: -1 });
     const tempFolio = ultimoMovimiento.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el folio" });
   }
 });
 

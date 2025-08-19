@@ -35,15 +35,17 @@ router.get("/listar", verifyToken, async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
-// Obtener el numero total de registros de socios sindicalizados
-router.get("/total", verifyToken, async (req, res) => {
-  await sindicalizados
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+// Obtener el número total de socios sindicalizados
+router.get("/total", verifyToken, async (_req, res) => {
+  try {
+    const totalSindicalizados = await sindicalizados.countDocuments();
+    res.json(totalSindicalizados);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total de socios sindicalizados" });
+  }
 });
+
 
 // Listar paginando los socios sindicalizados
 router.get("/listarPaginando", async (req, res) => {
@@ -62,14 +64,20 @@ router.get("/listarPaginando", async (req, res) => {
 });
 
 // Obtener el numero de ficha actual
-router.get("/obtenerFicha", verifyToken, async (req, res) => {
-  const registrosindicalizados = await sindicalizados.find().count();
-  if (registrosindicalizados === 0) {
-    res.status(200).json({ ficha: "1" });
-  } else {
-    const ultimo = await sindicalizados.findOne().sort({ _id: -1 });
+router.get("/obtenerFicha", verifyToken, async (_req, res) => {
+  try {
+    const registrosindicalizados = await sindicalizados.countDocuments();
+    if (registrosindicalizados === 0) {
+      return res.status(200).json({ ficha: "1" });
+    }
+
+    const ultimo = await sindicalizados.findOne({}).sort({ ficha: -1 });
     const tempFolio = parseInt(ultimo.ficha) + 1;
+
     res.status(200).json({ ficha: tempFolio.toString() });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener la ficha" });
   }
 });
 

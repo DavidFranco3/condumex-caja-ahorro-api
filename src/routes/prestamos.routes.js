@@ -127,36 +127,39 @@ router.get("/listarPeriodo", async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
-// Obtener el numero total de registros de prestamos
-router.get("/numeroPrestamos", async (req, res) => {
-  await prestamos
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+// Obtener el número total de préstamos
+router.get("/numeroPrestamos", async (_req, res) => {
+  try {
+    const totalPrestamos = await prestamos.countDocuments();
+    res.json(totalPrestamos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el número de préstamos" });
+  }
 });
 
-// Obtener el total de registros de cada razon social
+// Obtener el total de registros por tipo
 router.get("/totalxTipo", async (req, res) => {
-  const { tipo } = req.query;
-  await prestamos
-    .find({ tipo })
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const { tipo } = req.query;
+    const totalPorTipo = await prestamos.countDocuments({ tipo });
+    res.json(totalPorTipo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total por tipo" });
+  }
 });
 
-// Obtener el total de registros de cada razon social
+// Obtener el total de registros por tipo y ficha de socio
 router.get("/totalxSocioTipo", async (req, res) => {
-  const { tipo, ficha } = req.query;
-  await prestamos
-    .find({ tipo, ficha })
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const { tipo, ficha } = req.query;
+    const totalPorTipoFicha = await prestamos.countDocuments({ tipo, ficha });
+    res.json(totalPorTipoFicha);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total por tipo y ficha" });
+  }
 });
 
 // Listar paginando los prestamos
@@ -192,18 +195,20 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 });
 
 // Obtener el numero de folio actual
-router.get("/obtenerFolio", async (req, res) => {
-  const registroprestamos = await prestamos.find().count();
-  console.log(registroprestamos)
-  if (registroprestamos === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimoPrestamo] = await prestamos
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+router.get("/obtenerFolio", async (_req, res) => {
+  try {
+    const registroprestamos = await prestamos.countDocuments();
+    if (registroprestamos === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimoPrestamo = await prestamos.findOne({}).sort({ folio: -1 });
     const tempFolio = ultimoPrestamo.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el folio" });
   }
 });
 

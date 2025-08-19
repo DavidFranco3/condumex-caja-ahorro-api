@@ -35,15 +35,17 @@ router.get("/listar", verifyToken, async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
-// Obtener el numero total de registros de empleados
-router.get("/total", verifyToken, async (req, res) => {
-  await empleados
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+// Obtener el número total de registros de empleados
+router.get("/total", verifyToken, async (_req, res) => {
+  try {
+    const totalEmpleados = await empleados.countDocuments();
+    res.json(totalEmpleados);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total de empleados" });
+  }
 });
+
 
 // Listar paginando los empleados
 router.get("/listarPaginando", async (req, res) => {
@@ -62,16 +64,23 @@ router.get("/listarPaginando", async (req, res) => {
 });
 
 // Obtener el numero de ficha actual
-router.get("/obtenerFicha", verifyToken, async (req, res) => {
-  const registroempleados = await empleados.find().count();
-  if (registroempleados === 0) {
-    res.status(200).json({ ficha: "1" });
-  } else {
-    const ultimo = await empleados.findOne().sort({ _id: -1 });
+router.get("/obtenerFicha", verifyToken, async (_req, res) => {
+  try {
+    const registroempleados = await empleados.countDocuments();
+    if (registroempleados === 0) {
+      return res.status(200).json({ ficha: "1" });
+    }
+
+    const ultimo = await empleados.findOne({}).sort({ ficha: -1 });
     const tempFolio = parseInt(ultimo.ficha) + 1;
+
     res.status(200).json({ ficha: tempFolio.toString() });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener la ficha" });
   }
 });
+
 
 // Obtener un empleado en especifico
 router.get("/obtener/:id", verifyToken, async (req, res) => {

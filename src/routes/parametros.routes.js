@@ -27,14 +27,16 @@ router.get("/listar", verifyToken, async (req, res) => {
 });
 
 // Obtener el numero total de registros de parametros
-router.get("/numeroParametros", verifyToken, async (req, res) => {
-  await parametros
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+router.get("/numeroParametros", verifyToken, async (_req, res) => {
+  try {
+    const totalParametros = await parametros.countDocuments();
+    res.json(totalParametros);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el número de parámetros" });
+  }
 });
+
 
 // Listar paginando los parametros
 router.get("/listarPaginando", async (req, res) => {

@@ -34,25 +34,27 @@ router.get("/listarPeriodos", async (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
-// Obtener el numero total de registros de periodos
-router.get("/numeroPeriodos", async (req, res) => {
-  await periodos
-    .find()
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+// Obtener el número total de periodos
+router.get("/numeroPeriodos", async (_req, res) => {
+  try {
+    const totalPeriodos = await periodos.countDocuments();
+    res.json(totalPeriodos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el número de periodos" });
+  }
 });
 
-// Obtener el total de registros de cada razon social
+// Obtener el total de registros por tipo
 router.get("/totalxTipo", async (req, res) => {
-  const { tipo } = req.query;
-  await periodos
-    .find({ tipo })
-    .count()
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch((error) => res.json({ message: error }));
+  try {
+    const { tipo } = req.query;
+    const totalPorTipo = await periodos.countDocuments({ tipo });
+    res.json(totalPorTipo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el total por tipo" });
+  }
 });
 
 // Listar paginando los periodos
@@ -88,18 +90,20 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 });
 
 // Obtener el numero de folio actual
-router.get("/obtenerFolio", async (req, res) => {
-  const registroperiodos = await periodos.find().count();
-  console.log(registroperiodos)
-  if (registroperiodos === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimoPeriodo] = await periodos
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+router.get("/obtenerFolio", async (_req, res) => {
+  try {
+    const registroperiodos = await periodos.countDocuments();
+    if (registroperiodos === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimoPeriodo = await periodos.findOne({}).sort({ folio: -1 });
     const tempFolio = ultimoPeriodo.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el folio" });
   }
 });
 
