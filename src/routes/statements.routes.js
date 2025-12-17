@@ -18,6 +18,7 @@ const abonos = require("../models/abonos");
 const { getStatementAccount } = require("../utils/get-statement-account");
 const { createStament } = require("../utils/stament-acounts");
 const { verifyToken, isExpired } = require("../middleware/verifyToken");
+const usuarioCorreos = require("../models/usuarioCorreos");
 
 router.get("/razon", verifyToken, async (req, res) => {
   const { tipo, periodo } = req.query;
@@ -33,9 +34,9 @@ router.get("/razon", verifyToken, async (req, res) => {
   try {
     const rAportaciones = await aportaciones.aggregate([
       {
-        $match: { 
+        $match: {
           tipo: { $eq: tipo },
-          periodo: { $eq: parseInt(periodo)}, 
+          periodo: { $eq: parseInt(periodo) },
         },
       },
       {
@@ -48,10 +49,10 @@ router.get("/razon", verifyToken, async (req, res) => {
 
     const rRendimientos = await rendimientos.aggregate([
       {
-        $match: { 
+        $match: {
           tipo: { $eq: tipo },
-          periodo: { $eq: parseInt(periodo)}, 
-         },
+          periodo: { $eq: parseInt(periodo) },
+        },
       },
       {
         $group: {
@@ -63,10 +64,10 @@ router.get("/razon", verifyToken, async (req, res) => {
 
     const rPatrimonio = await patrimonio.aggregate([
       {
-        $match: { 
+        $match: {
           tipo: { $eq: tipo },
-          periodo: { $eq: parseInt(periodo)}, 
-         },
+          periodo: { $eq: parseInt(periodo) },
+        },
       },
       {
         $group: {
@@ -79,9 +80,9 @@ router.get("/razon", verifyToken, async (req, res) => {
     const rPrestamos = await prestamos.aggregate([
       {
         $match: {
-           tipo: { $eq: tipo },
-           periodo: { $eq: parseInt(periodo)}, 
-          },
+          tipo: { $eq: tipo },
+          periodo: { $eq: parseInt(periodo) },
+        },
       },
       {
         $group: {
@@ -93,9 +94,9 @@ router.get("/razon", verifyToken, async (req, res) => {
 
     const rRetiros = await retiros.aggregate([
       {
-        $match: { 
+        $match: {
           tipo: { $eq: tipo },
-          periodo: { $eq: parseInt(periodo)}, 
+          periodo: { $eq: parseInt(periodo) },
         },
       },
       {
@@ -108,9 +109,9 @@ router.get("/razon", verifyToken, async (req, res) => {
 
     const rBajaSocios = await bajaSocios.aggregate([
       {
-        $match: { 
+        $match: {
           tipo: { $eq: tipo },
-          periodo: { $eq: parseInt(periodo)}, 
+          periodo: { $eq: parseInt(periodo) },
         },
       },
       {
@@ -123,10 +124,10 @@ router.get("/razon", verifyToken, async (req, res) => {
 
     const rAbonos = await abonos.aggregate([
       {
-        $match: { 
+        $match: {
           tipo: { $eq: tipo },
-          periodo: { $eq: parseInt(periodo)}, 
-         },
+          periodo: { $eq: parseInt(periodo) },
+        },
       },
       {
         $group: {
@@ -384,14 +385,29 @@ router.get("/email/:fichaSocio", verifyToken, async (req, res) => {
           console.error(err);
         });
     });
+    
+    const obtenerCredencialesCorreo = async () => {
+      const credenciales = await usuarioCorreos.findOne();
+      // si tienes varios registros, aquí puedes filtrar por algún campo
 
+      if (!credenciales) {
+        throw new Error("No se encontraron credenciales de correo");
+      }
+
+      return {
+        user: credenciales.correo,
+        pass: credenciales.password,
+      };
+    };
+
+    const { user, pass } = await obtenerCredencialesCorreo();
     const transporter = nodeMailer.createTransport({
       host: "smtp.office365.com",
       port: 587,
       secure: false,
       auth: {
-        user: "ca.condutel@condumex.com.mx",
-        pass: "cah06.2025",
+        user,
+        pass,
       },
     });
 
