@@ -387,18 +387,24 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 
 // Obtener el numero de folio actual
 router.get("/obtenerFolio", async (_req, res) => {
-  const registrorendimientos = await rendimientos.find().count();
+  try {
+    const registrorendimientos = await rendimientos.countDocuments();
 
-  if (registrorendimientos === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimarendimiento] = await rendimientos
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+    if (registrorendimientos === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimarendimiento = await rendimientos
+      .findOne({})
+      .sort({ folio: -1 });
 
     const nextFolio = ultimarendimiento.folio + 1;
+
     res.status(200).json({ folio: nextFolio });
+
+  } catch (error) {
+    console.error("Error obtenerFolio rendimientos:", error);
+    res.status(500).json({ message: "Error al obtener folio" });
   }
 });
 

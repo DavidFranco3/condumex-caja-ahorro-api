@@ -192,17 +192,25 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 });
 
 // Obtener el numero de folio actual
-router.get("/obtenerFolio", async (req, res) => {
-  const registropatrimonio = await patrimonios.find().count();
-  if (registropatrimonio === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimoPatrimonio] = await patrimonios
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+router.get("/obtenerFolio", async (_req, res) => {
+  try {
+    const registropatrimonio = await patrimonios.countDocuments();
+
+    if (registropatrimonio === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimoPatrimonio = await patrimonios
+      .findOne({})
+      .sort({ folio: -1 });
+
     const tempFolio = ultimoPatrimonio.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+
+  } catch (error) {
+    console.error("Error obtenerFolio patrimonios:", error);
+    res.status(500).json({ message: "Error al obtener folio" });
   }
 });
 

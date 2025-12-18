@@ -66,16 +66,24 @@ router.get("/listarPaginando", async (req, res) => {
 
 // Obtener el numero de folio
 router.get("/obtenerFolio", verifyToken, async (req, res) => {
-  const registrosaldosGlobales = await saldosGlobales.find().count();
-  if (registrosaldosGlobales === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimoMovimiento] = await saldosGlobales
-      .find()
-      .sort({ folio: -1 })
-      .limit(1);
+  try {
+    const registrosaldosGlobales = await saldosGlobales.countDocuments();
+
+    if (registrosaldosGlobales === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimoMovimiento = await saldosGlobales
+      .findOne({})
+      .sort({ folio: -1 });
+
     const tempFolio = ultimoMovimiento.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+
+  } catch (error) {
+    console.error("Error obtenerFolio saldosGlobales:", error);
+    res.status(500).json({ message: "Error al obtener folio" });
   }
 });
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const saldosSocios = require("../models/movimientosSaldos");
 
 // Registro de saldosSocios
-router.post("/registro",  async (req, res) => {
+router.post("/registro", async (req, res) => {
   const { folio } = req.body;
 
   // Inicia validacion para no registrar saldosSocios con el mismo numero de folio
@@ -101,16 +101,24 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 
 // Obtener el numero de folio
 router.get("/obtenerFolio", async (_req, res) => {
-  const registrosaldosSocios = await saldosSocios.find().count();
-  if (registrosaldosSocios === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimoMovimiento] = await saldosSocios
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+  try {
+    const registrosaldosSocios = await saldosSocios.countDocuments();
+
+    if (registrosaldosSocios === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimoMovimiento = await saldosSocios
+      .findOne({})
+      .sort({ folio: -1 });
+
     const tempFolio = ultimoMovimiento.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+
+  } catch (error) {
+    console.error("Error obtenerFolio saldosSocios:", error);
+    res.status(500).json({ message: "Error al obtener folio" });
   }
 });
 

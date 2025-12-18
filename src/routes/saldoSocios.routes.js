@@ -92,13 +92,24 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 
 // Obtener el número de folio actual
 router.get("/obtenerFolioActual", verifyToken, async (req, res) => {
-  const registrosaldoSocios = await saldoSocios.find().count();
-  if (registrosaldoSocios === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimo] = await saldoSocios.find({}).sort({ folio: -1 }).limit(1);
+  try {
+    const registrosaldoSocios = await saldoSocios.countDocuments();
+
+    if (registrosaldoSocios === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimo = await saldoSocios
+      .findOne({})
+      .sort({ folio: -1 });
+
     const tempFolio = ultimo.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+
+  } catch (error) {
+    console.error("Error obtenerFolioActual:", error);
+    res.status(500).json({ message: "Error al obtener folio" });
   }
 });
 

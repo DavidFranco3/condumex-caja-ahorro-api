@@ -267,19 +267,27 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 
 // Obtener el numero de folio actual
 router.get("/obtenerFolio", async (_req, res) => {
-  const registroaportaciones = await aportaciones.find().count();
+  try {
+    const registroaportaciones = await aportaciones.countDocuments();
 
-  if (registroaportaciones === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimaAportacion] = await aportaciones
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+    if (registroaportaciones === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimaAportacion = await aportaciones
+      .findOne({})
+      .sort({ folio: -1 });
+
     const tempFolio = ultimaAportacion.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+
+  } catch (error) {
+    console.error("Error obtenerFolio aportaciones:", error);
+    res.status(500).json({ message: "Error al obtener folio" });
   }
 });
+
 
 // Obtener una aportacion en especifico
 router.get("/obtener/:id", async (req, res) => {

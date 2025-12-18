@@ -102,7 +102,7 @@ router.post("/registro", async (req, res) => {
 router.get("/listar", async (req, res) => {
   const { tipo, inicio, fin } = req.query;
   await abonos
-    .find({ tipo, createdAt: { $gte: new Date(inicio+'T00:00:00.000Z'), $lte: new Date(fin+'T23:59:59.999Z') } })
+    .find({ tipo, createdAt: { $gte: new Date(inicio + 'T00:00:00.000Z'), $lte: new Date(fin + 'T23:59:59.999Z') } })
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -183,17 +183,25 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 
 // Obtener el numero de folio actual
 router.get("/obtenerFolio", async (req, res) => {
-  const registroabonos = await abonos.find().count();
-  console.log(registroabonos)
-  if (registroabonos === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimoAbono] = await abonos
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+  try {
+    const registroabonos = await abonos.countDocuments();
+    console.log(registroabonos);
+
+    if (registroabonos === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimoAbono = await abonos
+      .findOne({})
+      .sort({ folio: -1 });
+
     const tempFolio = ultimoAbono.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+
+  } catch (error) {
+    console.error("Error obtenerFolio:", error);
+    res.status(500).json({ message: "Error al obtener folio" });
   }
 });
 

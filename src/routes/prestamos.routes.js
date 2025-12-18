@@ -100,8 +100,8 @@ router.post("/registro", async (req, res) => {
 // Obtener todos los abonos
 router.get("/listar", async (req, res) => {
   const { tipo, inicio, fin } = req.query;
-    await prestamos
-    .find({ tipo, createdAt: { $gte: new Date(inicio+'T00:00:00.000Z'), $lte: new Date(fin+'T23:59:59.999Z') } })
+  await prestamos
+    .find({ tipo, createdAt: { $gte: new Date(inicio + 'T00:00:00.000Z'), $lte: new Date(fin + 'T23:59:59.999Z') } })
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -110,7 +110,7 @@ router.get("/listar", async (req, res) => {
 // Obtener todos los abonos
 router.get("/listarPrestamos", async (req, res) => {
   const { tipo } = req.query;
-    await prestamos
+  await prestamos
     .find({ tipo })
     .sort({ _id: -1 })
     .then((data) => res.json(data))
@@ -120,7 +120,7 @@ router.get("/listarPrestamos", async (req, res) => {
 // Obtener todos los abonos
 router.get("/listarPeriodo", async (req, res) => {
   const { tipo, periodo } = req.query;
-    await prestamos
+  await prestamos
     .find({ tipo, periodo })
     .sort({ _id: -1 })
     .then((data) => res.json(data))
@@ -192,18 +192,26 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
 });
 
 // Obtener el numero de folio actual
-router.get("/obtenerFolio", async (req, res) => {
-  const registroprestamos = await prestamos.find().count();
-  console.log(registroprestamos)
-  if (registroprestamos === 0) {
-    res.status(200).json({ folio: 1 });
-  } else {
-    const [ultimoPrestamo] = await prestamos
-      .find({})
-      .sort({ folio: -1 })
-      .limit(1);
+router.get("/obtenerFolio", async (_req, res) => {
+  try {
+    const registroprestamos = await prestamos.countDocuments();
+    console.log(registroprestamos);
+
+    if (registroprestamos === 0) {
+      return res.status(200).json({ folio: 1 });
+    }
+
+    const ultimoPrestamo = await prestamos
+      .findOne({})
+      .sort({ folio: -1 });
+
     const tempFolio = ultimoPrestamo.folio + 1;
+
     res.status(200).json({ folio: tempFolio });
+
+  } catch (error) {
+    console.error("Error obtenerFolio prestamos:", error);
+    res.status(500).json({ message: "Error al obtener folio" });
   }
 });
 
@@ -232,7 +240,7 @@ router.get("/obtenerxFecha", async (req, res) => {
   const { fecha } = req.params;
 
   await prestamos
-     .find({ createdAt: { $gte: new Date(fecha+'T00:00:00.000Z'), $lte: new Date(fecha+'T23:59:59.999Z') } })
+    .find({ createdAt: { $gte: new Date(fecha + 'T00:00:00.000Z'), $lte: new Date(fecha + 'T23:59:59.999Z') } })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
