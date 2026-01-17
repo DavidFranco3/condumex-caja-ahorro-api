@@ -157,7 +157,7 @@ router.put("/actualizar/:id", verifyToken, async (req, res) => {
   // Inicia validacion para no registrar empleados con el mismo numero de ficha
   const busqueda = await empleados.findOne({ ficha });
 
-  if (busqueda && busqueda.ficha === parseInt(ficha) && busqueda._id != id) {
+  if (busqueda && busqueda.ficha === parseInt(ficha) && busqueda._id !== id) {
     return res
       .status(401)
       .json({ mensaje: "Ya existe un socio con este numero de ficha" });
@@ -177,7 +177,7 @@ router.delete("/eliminarMasivo", verifyToken, async (req, res) => {
   const { fecha, tipo } = req.query;
   await empleados
     .deleteMany({
-      tipo: tipo,
+      tipo,
       $and: [
         { createdAt: { $gte: (fecha + "T00:00:00.000Z") } },
         { createdAt: { $lte: (fecha + "T23:59:59.999Z") } }

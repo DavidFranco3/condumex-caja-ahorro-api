@@ -160,7 +160,7 @@ router.put("/actualizar/:id", verifyToken, async (req, res) => {
   // Inicia validacion para no registrar empleados con el mismo numero de ficha
   const busqueda = await sindicalizados.findOne({ ficha });
 
-  if (busqueda && busqueda.ficha === parseInt(ficha) && busqueda._id != id) {
+  if (busqueda && busqueda.ficha === parseInt(ficha) && busqueda._id !==id) {
     return res
       .status(401)
       .json({ mensaje: "Ya existe un socio con este numero de ficha" });

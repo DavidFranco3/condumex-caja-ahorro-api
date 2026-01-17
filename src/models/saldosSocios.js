@@ -24,7 +24,6 @@ saldosSocios.set("toJSON", {
     returnedObject.patrimonio = Number(returnedObject.patrimonio);
     returnedObject.aportacion = Number(returnedObject.aportacion);
     returnedObject.folioMovimiento = Number(returnedObject.folioMovimiento);
-    returnedObject.movimiento = returnedObject.movimiento;
 
     delete returnedObject.__v;
   },

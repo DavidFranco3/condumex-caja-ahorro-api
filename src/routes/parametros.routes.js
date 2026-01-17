@@ -66,20 +66,12 @@ router.put("/actualizar/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
   const {
     inicioPeriodoEmpleados,
-    inicioPeriodoContabilidadEmpleados,
-    inicioPeriodoPeregrinacionEmpleados,
     finPeriodoEmpleados,
-    finPeriodoContabilidadEmpleados,
-    finPeriodoPeregrinacionEmpleados,
     fechaEnvioEstadosCuentaEmpleados,
     fechaAporteEmpleados,
 
     inicioPeriodoSindicalizados,
-    inicioPeriodoContabilidadSindicalizados,
-    inicioPeriodoPeregrinacionSindicalizados,
     finPeriodoSindicalizados,
-    finPeriodoContabilidadSindicalizados,
-    finPeriodoPeregrinacionSindicalizados,
     fechaEnvioEstadosCuentaSindicalizados,
     fechaAporteSindicalizados,
   } = req.body;

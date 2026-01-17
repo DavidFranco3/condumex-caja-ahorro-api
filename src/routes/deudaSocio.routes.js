@@ -244,9 +244,9 @@ router.put("/actualizar/:id", async (req, res) => {
   await deudaSocio
     .findByIdAndUpdate(id, {
       $set: {
-        abonoTotal: abonoTotal,
-        prestamoTotal: prestamoTotal,
-        movimiento: movimiento,
+        abonoTotal,
+        prestamoTotal,
+        movimiento,
         createDate: createdAt,
       },
     })
@@ -259,7 +259,7 @@ router.delete("/eliminarMasivo", async (req, res) => {
   const { fecha, tipo } = req.query;
   await deudaSocio
     .deleteMany({
-      tipo: tipo,
+      tipo,
       $and: [
         { createdAt: { $gte: (fecha + "T00:00:00.000Z") } },
         { createdAt: { $lte: (fecha + "T23:59:59.999Z") } }

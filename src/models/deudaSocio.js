@@ -21,7 +21,6 @@ deudaSocio.set("toJSON", {
   transform: (_document, returnedObject) => {
     returnedObject.abonoTotal = Number(returnedObject.abonoTotal);
     returnedObject.prestamoTotal = Number(returnedObject.prestamoTotal);
-    returnedObject.movimiento = returnedObject.movimiento;
     returnedObject.fechaCreacion =
       returnedObject.createDate || returnedObject.createdAt;
     returnedObject.fechaActualizacion = returnedObject.updatedAt;

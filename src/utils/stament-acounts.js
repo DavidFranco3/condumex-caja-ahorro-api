@@ -17,13 +17,6 @@ const formatCurrency = (value) => {
   }).format(value);
 };
 
-const formatDate = (date) =>
-  new Intl.DateTimeFormat(LOCALE, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
-
 const generateHeader = (doc, { name }) => {
   doc
     .image("./src/assets/logo.png", 30, 50, { width: 90 })
@@ -296,7 +289,7 @@ const createStament = (stament, doc) => {
   const { name } =  company;
   
   console.log(name);
-  if (name == "Asociación de Empleados Sector Cables A.C."){
+  if (name === "Asociación de Empleados Sector Cables A.C."){
   const y1 = generateTable(doc, "Aportaciones", contributions.data, 260);
   const y2 = generateTable(doc, "Patrimonio", patrimony.data, y1 + 30);
   const y3 = generateTable(doc, "Intereses", yields.data, y2 + 30);

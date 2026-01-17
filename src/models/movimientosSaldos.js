@@ -13,7 +13,6 @@ const movimientosSaldos = new Schema(
     rendimiento: { type: mongoose.Decimal128, required: true },
     retiro: { type: mongoose.Decimal128, required: true },
     abono: { type: mongoose.Decimal128, required: true },
-    movimiento: { type: String, required: true },
     createDate: { type: Date },
   },
   {
@@ -29,7 +28,6 @@ movimientosSaldos.set("toJSON", {
     returnedObject.patrimonio = Number(returnedObject.patrimonio);
     returnedObject.rendimiento = Number(returnedObject.rendimiento);
     returnedObject.retiro = Number(returnedObject.retiro);
-    returnedObject.movimiento = returnedObject.movimiento;
     returnedObject.fechaCreacion =
       returnedObject.createDate || returnedObject.createdAt;
     returnedObject.fechaActualizacion = returnedObject.updatedAt;

@@ -31,7 +31,7 @@ router.get("/totalGeneralBySocio", async (req, res) => {
     return res.status(200).json({ data: result });
   } catch (error) {
     return res.status(500).json({
-      message: `Error al obtener total general para la fecha ${fecha} y razon social ${razonSocial}`,
+      message: `Error al obtener total general para la fecha ${req.fecha} y razon social ${req.razonSocial}`,
     });
   }
 });
@@ -338,7 +338,7 @@ router.delete("/eliminarMasivo", async (req, res) => {
   const { fecha, tipo } = req.query;
   await aportaciones
     .deleteMany({
-      tipo: tipo,
+      tipo,
       $and: [
         { createdAt: { $gte: (fecha + "T00:00:00.000Z") } },
         { createdAt: { $lte: (fecha + "T23:59:59.999Z") } }
