@@ -38,8 +38,7 @@ router.get("/listar", verifyToken, async (req, res) => {
 // Obtener el numero total de registros de socios socios especiales
 router.get("/total", verifyToken, async (req, res) => {
   await sociosEspeciales
-    .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -63,7 +62,7 @@ router.get("/listarPaginando", async (req, res) => {
 
 // Obtener el numero de ficha actual
 router.get("/obtenerFicha", verifyToken, async (req, res) => {
-  const registrosociosEspeciales = await sociosEspeciales.find().count();
+  const registrosociosEspeciales = await sociosEspeciales.countDocuments();
   if (registrosociosEspeciales === 0) {
     res.status(200).json({ ficha: "1" });
   } else {

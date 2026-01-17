@@ -38,8 +38,7 @@ router.get("/listar", verifyToken, async (req, res) => {
 // Obtener el numero total de registros de socios sindicalizados
 router.get("/total", verifyToken, async (req, res) => {
   await sindicalizados
-    .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -63,7 +62,7 @@ router.get("/listarPaginando", async (req, res) => {
 
 // Obtener el numero de ficha actual
 router.get("/obtenerFicha", verifyToken, async (req, res) => {
-  const registrosindicalizados = await sindicalizados.find().count();
+  const registrosindicalizados = await sindicalizados.countDocuments();
   if (registrosindicalizados === 0) {
     res.status(200).json({ ficha: "1" });
   } else {
@@ -160,7 +159,7 @@ router.put("/actualizar/:id", verifyToken, async (req, res) => {
   // Inicia validacion para no registrar empleados con el mismo numero de ficha
   const busqueda = await sindicalizados.findOne({ ficha });
 
-  if (busqueda && busqueda.ficha === parseInt(ficha) && busqueda._id !==id) {
+  if (busqueda && busqueda.ficha === parseInt(ficha) && busqueda._id !== id) {
     return res
       .status(401)
       .json({ mensaje: "Ya existe un socio con este numero de ficha" });

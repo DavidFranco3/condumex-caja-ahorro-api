@@ -31,8 +31,7 @@ router.post("/registro", verifyToken, async (req, res) => {
 // Obtener el numero total de registros de informacion de respaldos automaticos
 router.get("/total", verifyToken, async (req, res) => {
   await infoRespaldosAutomaticos
-    .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));

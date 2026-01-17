@@ -58,7 +58,7 @@ router.get("/listarPaginando", async (req, res) => {
 router.get("/total", async (req, res) => {
   await usuarios
     .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -114,8 +114,8 @@ router.put("/actualizar/:id", async (req, res) => {
       { _id: id },
       { $set: updateData }
     )
-    .then((data) => res.status(200).json({ mensaje: "Datos actualizados" }))
-    .catch((error) => res.json({ message: error }));
+      .then((data) => res.status(200).json({ mensaje: "Datos actualizados" }))
+      .catch((error) => res.json({ message: error }));
   } catch (error) {
     res.status(500).json({ message: "Error al actualizar los datos" });
   }

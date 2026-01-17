@@ -40,8 +40,7 @@ router.get("/listar", verifyToken, async (req, res) => {
 // Obtener el número total de registros de saldos de socios
 router.get("/total", verifyToken, async (req, res) => {
   await saldoSocios
-    .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -52,7 +51,7 @@ router.get("/totalxTipo/:tipo", verifyToken, async (req, res) => {
   const { tipo } = req.params;
   await saldoSocios
     .find({ tipo })
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));

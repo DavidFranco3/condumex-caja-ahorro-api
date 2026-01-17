@@ -38,8 +38,7 @@ router.get("/listar", verifyToken, async (req, res) => {
 // Obtener el numero total de registros de empleados
 router.get("/total", verifyToken, async (req, res) => {
   await empleados
-    .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -63,7 +62,7 @@ router.get("/listarPaginando", async (req, res) => {
 
 // Obtener el numero de ficha actual
 router.get("/obtenerFicha", verifyToken, async (req, res) => {
-  const registroempleados = await empleados.find().count();
+  const registroempleados = await empleados.countDocuments();
   if (registroempleados === 0) {
     res.status(200).json({ ficha: "1" });
   } else {

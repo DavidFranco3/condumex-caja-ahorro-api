@@ -91,8 +91,7 @@ router.get("/listarPeriodo", async (req, res) => {
 // Obtener el numero total de registros de baja de socios
 router.get("/numeroBajas", async (req, res) => {
   await bajaSocios
-    .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -103,7 +102,7 @@ router.get("/totalxTipo", async (req, res) => {
   const { tipo } = req.query;
   await bajaSocios
     .find({ tipo })
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));

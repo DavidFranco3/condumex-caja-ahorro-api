@@ -336,8 +336,7 @@ router.get("/listarPeriodo", async (_req, res) => {
 // Obtener el numero total de registros de rendimientos
 router.get("/numerorendimientos", async (_req, res) => {
   await rendimientos
-    .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -348,7 +347,7 @@ router.get("/totalxTipo", async (req, res) => {
   const { tipo } = req.query;
   await rendimientos
     .find({ tipo })
-    .count()
+    .countDocuments()
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });

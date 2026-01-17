@@ -130,8 +130,7 @@ router.post("/registro", async (req, res) => {
 // Obtener el numero total de registros de patrimonios
 router.get("/numeroPatrimonios", async (req, res) => {
   await patrimonios
-    .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -142,7 +141,7 @@ router.get("/totalxTipo", async (req, res) => {
   const { tipo } = req.query;
   await patrimonios
     .find({ tipo })
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -153,7 +152,7 @@ router.get("/totalxSocioTipo", async (req, res) => {
   const { tipo, ficha } = req.query;
   await patrimonios
     .find({ tipo, ficha })
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));

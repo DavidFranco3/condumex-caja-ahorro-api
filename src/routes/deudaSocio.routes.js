@@ -129,8 +129,7 @@ router.get("/listarPeriodo", async (req, res) => {
 // Obtener el numero total de registros de deudas
 router.get("/numeroDeudas", async (req, res) => {
   await deudaSocio
-    .find()
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
@@ -141,7 +140,7 @@ router.get("/totalxTipo", async (req, res) => {
   const { tipo } = req.query;
   await deudaSocio
     .find({ tipo })
-    .count()
+    .countDocuments()
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
