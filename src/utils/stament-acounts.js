@@ -1,8 +1,10 @@
-const moment =  require("moment");
-require('moment/locale/es');
+const dayjs = require("dayjs");
+require('dayjs/locale/es');
+const localizedFormat = require('dayjs/plugin/localizedFormat');
+dayjs.extend(localizedFormat);
 
 // Configura el idioma a español
-moment.locale("es");
+dayjs.locale("es");
 
 const FRACTION_DIGITS = 2;
 const LOCALE = "es-MX";
@@ -59,7 +61,7 @@ const generateSocioInformation = (doc, { token, name, email }) => {
   generateHr(doc, 222);
 };
 
-const generateBalances = (doc, balancePositive, negativeBalance, y ) => {
+const generateBalances = (doc, balancePositive, negativeBalance, y) => {
   let positionY = y;
 
   if (positionY + 60 > 730) {
@@ -67,8 +69,8 @@ const generateBalances = (doc, balancePositive, negativeBalance, y ) => {
     y = 50;
     positionY = y;
   }
-    
-    doc
+
+  doc
     .fillColor("#000000")
     .font("Courier-Bold")
     .fontSize(12)
@@ -152,7 +154,7 @@ const generateTable = (doc, title, data, y) => {
       doc,
       positionY,
       descripcion || index + 1,
-      descripcion ? "" : moment(fechaCreacion).format('LL'),
+      descripcion ? "" : dayjs(fechaCreacion).format('LL'),
       formatCurrency(monto)
     );
 
@@ -226,24 +228,24 @@ const createStament = (stament, doc) => {
   );
 
   withdrawals.data = withdrawals.data.map(
-    ({ createdAt: fechaCreacion, retiro: monto }) => ({ 
-        fechaCreacion, 
-        monto,
+    ({ createdAt: fechaCreacion, retiro: monto }) => ({
+      fechaCreacion,
+      monto,
     })
   );
-  
+
   loans.data = loans.data.map(
-    ({ createdAt: fechaCreacion, prestamoTotal: monto }) => ({ 
-       fechaCreacion,
-       monto,
-    })     
+    ({ createdAt: fechaCreacion, prestamoTotal: monto }) => ({
+      fechaCreacion,
+      monto,
+    })
   );
-  
+
   payment.data = payment.data.map(
-    ({ createdAt: fechaCreacion, abono: monto }) => ({ 
-       fechaCreacion,
-       monto,
-    })     
+    ({ createdAt: fechaCreacion, abono: monto }) => ({
+      fechaCreacion,
+      monto,
+    })
   );
 
   contributions.data.push({
@@ -269,13 +271,13 @@ const createStament = (stament, doc) => {
     fechaCreacion: "",
     monto: withdrawals.total,
   });
-  
+
   loans.data.push({
     descripcion: "TOTAL",
     fechaCreacion: "",
     monto: loans.total,
   });
-  
+
   payment.data.push({
     descripcion: "TOTAL",
     fechaCreacion: "",
@@ -285,27 +287,27 @@ const createStament = (stament, doc) => {
   generateMetadata(doc, company);
   generateHeader(doc, company);
   generateSocioInformation(doc, associate);
-  
-  const { name } =  company;
-  
+
+  const { name } = company;
+
   console.log(name);
-  if (name === "Asociación de Empleados Sector Cables A.C."){
-  const y1 = generateTable(doc, "Aportaciones", contributions.data, 260);
-  const y2 = generateTable(doc, "Patrimonio", patrimony.data, y1 + 30);
-  const y3 = generateTable(doc, "Intereses", yields.data, y2 + 30);
-  const y4 = generateTable(doc, "Retiros", withdrawals.data, y3 + 30);
-  const y5 = generateTable(doc, "Préstamos", loans.data, y4 + 30);
-  const y6 = generateTable(doc, "Abonos", payment.data, y5 + 30);
-  
-  generateBalances(doc, contributions.total + patrimony.total + yields.total, loans.total - payment.total, y6 + 30);
+  if (name === "Asociación de Empleados Sector Cables A.C.") {
+    const y1 = generateTable(doc, "Aportaciones", contributions.data, 260);
+    const y2 = generateTable(doc, "Patrimonio", patrimony.data, y1 + 30);
+    const y3 = generateTable(doc, "Intereses", yields.data, y2 + 30);
+    const y4 = generateTable(doc, "Retiros", withdrawals.data, y3 + 30);
+    const y5 = generateTable(doc, "Préstamos", loans.data, y4 + 30);
+    const y6 = generateTable(doc, "Abonos", payment.data, y5 + 30);
+
+    generateBalances(doc, contributions.total + patrimony.total + yields.total, loans.total - payment.total, y6 + 30);
   } else {
-  const y1 = generateTable(doc, "Aportaciones", contributions.data, 260);
-  const y2 = generateTable(doc, "Intereses", yields.data, y1 + 30);
-  const y3 = generateTable(doc, "Retiros", withdrawals.data, y2 + 30);
-  const y4 = generateTable(doc, "Préstamos", loans.data, y3 + 30);
-  const y5 = generateTable(doc, "Abonos", payment.data, y4 + 30);
-  
-  generateBalances(doc, contributions.total + yields.total, loans.total - payment.total, y5 + 30);
+    const y1 = generateTable(doc, "Aportaciones", contributions.data, 260);
+    const y2 = generateTable(doc, "Intereses", yields.data, y1 + 30);
+    const y3 = generateTable(doc, "Retiros", withdrawals.data, y2 + 30);
+    const y4 = generateTable(doc, "Préstamos", loans.data, y3 + 30);
+    const y5 = generateTable(doc, "Abonos", payment.data, y4 + 30);
+
+    generateBalances(doc, contributions.total + yields.total, loans.total - payment.total, y5 + 30);
   }
   generateFooter(doc);
 };

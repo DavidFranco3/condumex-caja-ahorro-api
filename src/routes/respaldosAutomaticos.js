@@ -1,4 +1,4 @@
-const moment = require("moment");
+const dayjs = require("dayjs");
 
 // Función que determina la ejecución de los respaldos
 function lanzarElDia(momento, tarea) {
@@ -8,7 +8,7 @@ function lanzarElDia(momento, tarea) {
   setTimeout(tarea, momento.getTime() - new Date().getTime());
 }
 
-console.log(moment(new Date()).endOf("month").format("YYYY-DD-MM"));
+console.log(dayjs(new Date()).endOf("month").format("YYYY-DD-MM"));
 
 // Tarea de respaldos
 function tarea() {
