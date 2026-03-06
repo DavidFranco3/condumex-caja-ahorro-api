@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sentry/node": "10.38.0",
+    "@sentry/node": "10.42.0",
     "@sentry/tracing": "7.120.4",
     "atob": "^2.1.2",
     "base64-stream": "1.0.0",
@@ -27,11 +27,11 @@
     "jwt-decode": "4.0.0",
     "lodash": "4.17.23",
     "mongodb": "^7.1.0",
-    "mongoose": "^9.1.6",
+    "mongoose": "^9.2.4",
     "mongoose-paginate-v2": "1.9.1",
     "morgan": "1.10.1",
     "node-blob": "^0.0.2",
-    "nodemailer": "8.0.0",
+    "nodemailer": "8.0.1",
     "pdfkit": "0.17.2",
     "serve-favicon": "2.5.1"
   },
@@ -43,11 +43,11 @@
     "eslint-plugin-prettier": "5.5.5",
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-standard": "5.0.0",
-    "globals": "^17.3.0",
+    "globals": "^17.4.0",
     "husky": "=9",
-    "lint-staged": ">=16.2.7",
-    "neostandard": "^0.12.2",
-    "nodemon": "3.1.11",
+    "lint-staged": ">=16.3.2",
+    "neostandard": "^0.13.0",
+    "nodemon": "3.1.14",
     "prettier": "3.8.1",
     "standard": "17.1.2"
   },
@@ -64,5 +64,6 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
-  }
+  },
+  "packageManager": "yarn@4.13.0"
 }

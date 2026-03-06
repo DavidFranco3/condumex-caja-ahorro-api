@@ -39,7 +39,6 @@ router.get("/listar", verifyToken, async (req, res) => {
 router.get("/total", verifyToken, async (req, res) => {
   await empleados
     .countDocuments()
-    .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
@@ -107,7 +106,7 @@ router.get("/obtenerxCoincidenciasNombre/:coincidencia", verifyToken, async (req
   const { coincidencia } = req.params;
   console.log(coincidencia);
   await empleados
-    .find({ $or: [{ nombre: /sinecio/i }] })
+    .find({ $or: [{ nombre: new RegExp(coincidencia, "i") }] })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 }

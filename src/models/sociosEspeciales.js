@@ -7,7 +7,8 @@ const sociosEspeciales = new Schema(
     nombre: { type: String, required: true },
     tipo: { type: String, required: true },
     correo: { type: String, required: true },
-    estado: { type: String, required: true},
+    estado: { type: String, required: true },
+    status: { type: Boolean, default: true },
     createDate: { type: Date },
   },
   {

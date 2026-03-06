@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const bajaSocios = require("../models/bajaSocios");
+const empleados = require("../models/empleados");
+const sindicalizados = require("../models/sindicalizados");
+const sociosEspeciales = require("../models/sociosEspeciales");
 
 // Obtener todas las bajas por socio
 router.get("/bySocio", async (req, res) => {
@@ -49,11 +52,17 @@ router.post("/registro", async (req, res) => {
     const bajaSociosRegistrar = bajaSocios(req.body);
     await bajaSociosRegistrar
       .save()
-      .then((data) =>
+      .then(async (data) => {
+        const match = { ficha: req.body.fichaSocio, tipo: req.body.tipo };
+        const update = { $set: { status: false, estado: "false" } };
+        await empleados.updateOne(match, update);
+        await sindicalizados.updateOne(match, update);
+        await sociosEspeciales.updateOne(match, update);
+
         res
           .status(200)
-          .json({ mensaje: "Registro exitoso de la baja del socio" })
-      )
+          .json({ mensaje: "Registro exitoso de la baja del socio" });
+      })
       .catch((error) => res.json({ message: error }));
   }
 });

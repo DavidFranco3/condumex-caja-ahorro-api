@@ -39,7 +39,6 @@ router.get("/listar", verifyToken, async (req, res) => {
 router.get("/total", verifyToken, async (req, res) => {
   await sociosEspeciales
     .countDocuments()
-    .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
@@ -97,10 +96,7 @@ router.get("/obtenerByNombre", verifyToken, async (req, res) => {
   const { nombre } = req.query;
   await sociosEspeciales
     .find({
-      $and: [
-        { estado: { $eq: "true" } },
-        { nombre: { $regex: nombre, $options: "i" } },
-      ],
+      nombre: { $regex: nombre, $options: "i" },
     })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));

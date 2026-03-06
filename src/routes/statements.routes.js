@@ -201,7 +201,6 @@ router.get("/socio", verifyToken, async (req, res) => {
   const { fichaSocio, periodo } = req.query;
   const paramFindSocio = [
     { ficha: { $eq: fichaSocio } },
-    { estatus: { $eq: "true" } },
   ];
 
   if (!fichaSocio) {
@@ -225,6 +224,12 @@ router.get("/socio", verifyToken, async (req, res) => {
     }
 
     const associate = empleado || socio;
+
+    if (associate.status === false) {
+      return res.status(400).json({
+        message: "El socio se encuentra dado de baja",
+      });
+    }
 
     const statement = await getStatementAccount(associate, periodo);
 
@@ -257,7 +262,6 @@ router.get("/pdf/:fichaSocio", async (req, res) => {
 
   const paramFindSocio = [
     { ficha: { $eq: fichaSocio } },
-    { estatus: { $eq: "true" } },
   ];
 
   try {
@@ -282,6 +286,12 @@ router.get("/pdf/:fichaSocio", async (req, res) => {
     }
 
     const associate = empleado || socio;
+
+    if (associate.status === false) {
+      return res.status(400).json({
+        message: "El socio se encuentra dado de baja",
+      });
+    }
 
     const statement = await getStatementAccount(associate, periodo);
 
@@ -321,7 +331,6 @@ router.get("/email/:fichaSocio", verifyToken, async (req, res) => {
 
   const paramFindSocio = [
     { ficha: { $eq: fichaSocio } },
-    { estatus: { $eq: "true" } },
   ];
 
   if (!fichaSocio) {
@@ -346,9 +355,9 @@ router.get("/email/:fichaSocio", verifyToken, async (req, res) => {
 
     const associate = empleado || socio;
 
-    if (!empleado && !socio) {
-      return res.status(400).json({
-        message: "El socio no existe",
+    if (associate.status === false) {
+      return res.status(200).json({
+        message: "Socio inactivo, correo omitido",
       });
     }
 
@@ -385,7 +394,7 @@ router.get("/email/:fichaSocio", verifyToken, async (req, res) => {
           console.error(err);
         });
     });
-    
+
     const obtenerCredencialesCorreo = async () => {
       const credenciales = await usuarioCorreos.findOne();
       // si tienes varios registros, aquí puedes filtrar por algún campo
