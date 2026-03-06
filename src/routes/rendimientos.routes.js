@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const rendimientos = require("../models/rendimientos");
+const empleados = require("../models/empleados");
+const sindicalizados = require("../models/sindicalizados");
+const sociosEspeciales = require("../models/sociosEspeciales");
 
 // Obtener los datos del saldo del socio por ficha del socio
 router.get("/obtenerRendimientoxFicha/:fichaSocio", async (req, res) => {
@@ -26,11 +29,23 @@ router.get("/totalGeneralByRazon", async (req, res) => {
   }
 
   try {
+    let activeSociosModel;
+    if (razonSocial === "Asociación de Empleados Sector Cables A.C.") {
+      activeSociosModel = empleados;
+    } else if (razonSocial === "Sindicato de Obreros del Sector Cables") {
+      activeSociosModel = sindicalizados;
+    } else {
+      activeSociosModel = sociosEspeciales;
+    }
+    const activeDocs = await activeSociosModel.find({ estado: { $ne: "false" } }, { ficha: 1 });
+    const activeFichas = activeDocs.map(doc => parseInt(doc.ficha)).filter(f => !isNaN(f));
+
     const result = await rendimientos.aggregate([
       {
         $match: {
           tipo: razonSocial,
-          periodo: parseInt(periodo)
+          periodo: parseInt(periodo),
+          fichaSocio: { $in: activeFichas }
         },
       },
       {
@@ -46,7 +61,8 @@ router.get("/totalGeneralByRazon", async (req, res) => {
             {
               $match: {
                 tipo: razonSocial,
-                periodo: parseInt(periodo)
+                periodo: parseInt(periodo),
+                fichaSocio: { $in: activeFichas }
               },
             },
             {
@@ -65,7 +81,8 @@ router.get("/totalGeneralByRazon", async (req, res) => {
             {
               $match: {
                 tipo: razonSocial,
-                periodo: parseInt(periodo)
+                periodo: parseInt(periodo),
+                fichaSocio: { $in: activeFichas }
               },
             },
             {
@@ -107,11 +124,23 @@ router.get("/totalGeneralBySocios", async (req, res) => {
   }
 
   try {
+    let activeSociosModel;
+    if (razonSocial === "Asociación de Empleados Sector Cables A.C.") {
+      activeSociosModel = empleados;
+    } else if (razonSocial === "Sindicato de Obreros del Sector Cables") {
+      activeSociosModel = sindicalizados;
+    } else {
+      activeSociosModel = sociosEspeciales;
+    }
+    const activeDocs = await activeSociosModel.find({ estado: { $ne: "false" } }, { ficha: 1 });
+    const activeFichas = activeDocs.map(doc => parseInt(doc.ficha)).filter(f => !isNaN(f));
+
     const result = await rendimientos.aggregate([
       {
         $match: {
           tipo: razonSocial,
-          periodo: parseInt(periodo)
+          periodo: parseInt(periodo),
+          fichaSocio: { $in: activeFichas }
         },
       },
       {
@@ -127,7 +156,8 @@ router.get("/totalGeneralBySocios", async (req, res) => {
             {
               $match: {
                 tipo: razonSocial,
-                periodo: parseInt(periodo)
+                periodo: parseInt(periodo),
+                fichaSocio: { $in: activeFichas }
               },
             },
             {
@@ -146,7 +176,8 @@ router.get("/totalGeneralBySocios", async (req, res) => {
             {
               $match: {
                 tipo: razonSocial,
-                periodo: parseInt(periodo)
+                periodo: parseInt(periodo),
+                fichaSocio: { $in: activeFichas }
               },
             },
             {

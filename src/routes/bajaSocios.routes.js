@@ -54,7 +54,7 @@ router.post("/registro", async (req, res) => {
       .save()
       .then(async (data) => {
         const match = { ficha: req.body.fichaSocio, tipo: req.body.tipo };
-        const update = { $set: { status: false, estado: "false" } };
+        const update = { $set: { estado: "false" } };
         await empleados.updateOne(match, update);
         await sindicalizados.updateOne(match, update);
         await sociosEspeciales.updateOne(match, update);

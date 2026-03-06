@@ -225,7 +225,7 @@ router.get("/socio", verifyToken, async (req, res) => {
 
     const associate = empleado || socio;
 
-    if (associate.status === false) {
+    if (associate.estado === "false") {
       return res.status(400).json({
         message: "El socio se encuentra dado de baja",
       });
@@ -287,7 +287,7 @@ router.get("/pdf/:fichaSocio", async (req, res) => {
 
     const associate = empleado || socio;
 
-    if (associate.status === false) {
+    if (associate.estado === "false") {
       return res.status(400).json({
         message: "El socio se encuentra dado de baja",
       });
@@ -355,7 +355,7 @@ router.get("/email/:fichaSocio", verifyToken, async (req, res) => {
 
     const associate = empleado || socio;
 
-    if (associate.status === false) {
+    if (associate.estado === "false") {
       return res.status(200).json({
         message: "Socio inactivo, correo omitido",
       });
