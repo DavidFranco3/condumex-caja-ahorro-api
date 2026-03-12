@@ -4,6 +4,7 @@ const bajaSocios = require("../models/bajaSocios");
 const empleados = require("../models/empleados");
 const sindicalizados = require("../models/sindicalizados");
 const sociosEspeciales = require("../models/sociosEspeciales");
+const { attachPartnerNames } = require("../utils/attach-partner-names");
 
 // Obtener todas las bajas por socio
 router.get("/bySocio", async (req, res) => {
@@ -25,8 +26,9 @@ router.get("/bySocio", async (req, res) => {
         total: 0,
       });
     } else {
+      const hydratedData = await attachPartnerNames(result);
       res.json({
-        bajas: result,
+        bajas: hydratedData,
         total: 0,
       });
     }
@@ -73,7 +75,10 @@ router.get("/listar", async (req, res) => {
   await bajaSocios
     .find({ tipo, createdAt: { $gte: new Date(inicio + 'T00:00:00.000Z'), $lte: new Date(fin + 'T23:59:59.999Z') } })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -83,7 +88,10 @@ router.get("/listarBajas", async (req, res) => {
   await bajaSocios
     .find({ tipo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -93,7 +101,10 @@ router.get("/listarPeriodo", async (req, res) => {
   await bajaSocios
     .find({ tipo, periodo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -129,7 +140,10 @@ router.get("/listarPaginando", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -145,7 +159,10 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -179,7 +196,10 @@ router.get("/obtener/:id", async (req, res) => {
 
   await bajaSocios
     .findById(id)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -189,7 +209,10 @@ router.get("/obtenerxFicha/:fichaSocio", async (req, res) => {
 
   await bajaSocios
     .findOne({ fichaSocio })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const abonos = require("../models/abonos");
+const { attachPartnerNames } = require("../utils/attach-partner-names");
 
 // Obtener todos los abonos por socio
 router.get("/bySocio", async (req, res) => {
@@ -23,8 +24,9 @@ router.get("/bySocio", async (req, res) => {
         total,
       });
     } else {
+      const hydratedData = await attachPartnerNames(result);
       res.json({
-        abonos: result,
+        abonos: hydratedData,
         total,
       });
     }
@@ -104,7 +106,10 @@ router.get("/listar", async (req, res) => {
   await abonos
     .find({ tipo, createdAt: { $gte: new Date(inicio + 'T00:00:00.000Z'), $lte: new Date(fin + 'T23:59:59.999Z') } })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -114,7 +119,10 @@ router.get("/listarAbonos", async (req, res) => {
   await abonos
     .find({ tipo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -124,7 +132,10 @@ router.get("/listarPeriodo", async (req, res) => {
   await abonos
     .find({ tipo, periodo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -160,7 +171,10 @@ router.get("/listarPaginando", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -176,7 +190,10 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -210,7 +227,10 @@ router.get("/obtener/:id", async (req, res) => {
   // console.log("buscando")
   await abonos
     .findById(id)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -220,7 +240,10 @@ router.get("/obtenerxFicha/:fichaSocio", async (req, res) => {
 
   await abonos
     .findOne({ fichaSocio })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 

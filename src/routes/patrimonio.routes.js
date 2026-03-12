@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const patrimonios = require("../models/patrimonio");
+const { attachPartnerNames } = require("../utils/attach-partner-names");
 
 // Obtener todos los patrimonios por socio
 router.get("/bySocio", async (req, res) => {
@@ -24,8 +25,9 @@ router.get("/bySocio", async (req, res) => {
         total
       });
     } else {
+      const hydratedData = await attachPartnerNames(result);
       res.json({
-        patrimonio: result,
+        patrimonio: hydratedData,
         total
       });
     }
@@ -83,7 +85,10 @@ router.get("/listar", async (req, res) => {
   await patrimonios
     .find({ tipo, createdAt: { $gte: new Date(inicio + 'T00:00:00.000Z'), $lte: new Date(fin + 'T23:59:59.999Z') } })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -92,7 +97,10 @@ router.get("/listarPatrimonios", async (req, res) => {
   await patrimonios
     .find({ tipo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -101,7 +109,10 @@ router.get("/listarPeriodo", async (req, res) => {
   await patrimonios
     .find({ tipo, periodo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -170,7 +181,10 @@ router.get("/listarPaginando", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -186,7 +200,10 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -219,7 +236,10 @@ router.get("/obtener/:id", async (req, res) => {
   // console.log("buscando")
   await patrimonios
     .findById(id)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -229,7 +249,10 @@ router.get("/obtenerxFicha/:fichaSocio", async (req, res) => {
 
   await patrimonios
     .findOne({ fichaSocio })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 

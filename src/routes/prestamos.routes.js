@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const prestamos = require("../models/prestamos");
+const { attachPartnerNames } = require("../utils/attach-partner-names");
 
 // Obtener todos los prestamos por socio
 router.get("/bySocio", async (req, res) => {
@@ -22,8 +23,9 @@ router.get("/bySocio", async (req, res) => {
         total
       });
     } else {
+      const hydratedData = await attachPartnerNames(result);
       res.json({
-        prestamos: result,
+        prestamos: hydratedData,
         total
       });
     }
@@ -103,7 +105,10 @@ router.get("/listar", async (req, res) => {
   await prestamos
     .find({ tipo, createdAt: { $gte: new Date(inicio + 'T00:00:00.000Z'), $lte: new Date(fin + 'T23:59:59.999Z') } })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -113,7 +118,10 @@ router.get("/listarPrestamos", async (req, res) => {
   await prestamos
     .find({ tipo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -123,7 +131,10 @@ router.get("/listarPeriodo", async (req, res) => {
   await prestamos
     .find({ tipo, periodo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -170,7 +181,10 @@ router.get("/listarPaginando", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -186,7 +200,10 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -220,7 +237,10 @@ router.get("/obtener/:id", async (req, res) => {
   // console.log("buscando")
   await prestamos
     .findById(id)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -230,7 +250,10 @@ router.get("/obtenerxFicha/:fichaSocio", async (req, res) => {
 
   await prestamos
     .findOne({ fichaSocio })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const deudaSocio = require("../models/deudaSocio");
+const { attachPartnerNames } = require("../utils/attach-partner-names");
 
 // Obtener todos las deudas por socio
 router.get("/bySocio", async (req, res) => {
@@ -23,8 +24,9 @@ router.get("/bySocio", async (req, res) => {
         total,
       });
     } else {
+      const hydratedData = await attachPartnerNames(result);
       res.json({
-        deudaSocio: result,
+        deudaSocio: hydratedData,
         total,
       });
     }
@@ -104,7 +106,10 @@ router.get("/listar", async (req, res) => {
   await deudaSocio
     .find({ tipo, createdAt: { $gte: new Date(inicio + 'T00:00:00.000Z'), $lte: new Date(fin + 'T23:59:59.999Z') } })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -113,7 +118,10 @@ router.get("/listarDeudaSocio", async (req, res) => {
   await deudaSocio
     .find({ tipo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -122,7 +130,10 @@ router.get("/listarPeriodo", async (req, res) => {
   await deudaSocio
     .find({ tipo, periodo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -157,7 +168,10 @@ router.get("/listarPaginando", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -172,7 +186,10 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -204,7 +221,10 @@ router.get("/obtener/:id", async (req, res) => {
   const { id } = req.params;
   await deudaSocio
     .findById(id)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -214,7 +234,10 @@ router.get("/obtenerxFicha/:fichaSocio", async (req, res) => {
 
   await deudaSocio
     .findOne({ fichaSocio })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 

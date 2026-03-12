@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const aportaciones = require("../models/aportaciones");
+const { attachPartnerNames } = require("../utils/attach-partner-names");
 
 router.get("/totalGeneralBySocio", async (req, res) => {
   // get fecha and razon social by req.query
@@ -102,7 +103,8 @@ router.get("/bySocio", async (req, res) => {
         total,
       });
     } else {
-      res.json({ aportaciones: result, total });
+      const hydratedData = await attachPartnerNames(result);
+      res.json({ aportaciones: hydratedData, total });
     }
   } catch (err) {
     res.status(500).send({
@@ -188,7 +190,10 @@ router.get("/listar", async (_req, res) => {
   await aportaciones
     .find({ tipo, createdAt: { $gte: new Date(inicio + 'T00:00:00.000Z'), $lte: new Date(fin + 'T23:59:59.999Z') } })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -198,7 +203,10 @@ router.get("/listarAportaciones", async (_req, res) => {
   await aportaciones
     .find({ tipo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -208,7 +216,10 @@ router.get("/listarPeriodo", async (_req, res) => {
   await aportaciones
     .find({ tipo, periodo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -244,7 +255,10 @@ router.get("/listarPaginando", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -260,7 +274,10 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -293,7 +310,10 @@ router.get("/obtener/:id", async (req, res) => {
   const { id } = req.params;
   await aportaciones
     .findById(id)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 

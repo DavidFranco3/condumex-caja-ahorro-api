@@ -57,6 +57,11 @@ async function getStatementAccount(associate, periodo) {
       bajasTotal += Number(val);
     }
 
+    const hydrate = (list) => list.map(r => ({ 
+      ...(r.toJSON ? r.toJSON() : r), 
+      nombreSocio: associate.nombre 
+    }));
+
     return {
       company: {
         name: associate.tipo,
@@ -67,31 +72,31 @@ async function getStatementAccount(associate, periodo) {
         email: associate.correo,
       },
       contributions: {
-        data: rAportaciones,
+        data: hydrate(rAportaciones),
         total: aportacionesTotal,
       },
       patrimony: {
-        data: rPatrimonio,
+        data: hydrate(rPatrimonio),
         total: patrimonioTotal,
       },
       yields: {
-        data: rRendimiento,
+        data: hydrate(rRendimiento),
         total: rendimientosTotal,
       },
       loans: {
-        data: rPrestamos,
+        data: hydrate(rPrestamos),
         total: prestamosTotal,
       },
       withdrawals: {
-        data: rRetiros,
+        data: hydrate(rRetiros),
         total: retirosTotal,
       },
       layoffs: {
-        data: rBajas,
+        data: hydrate(rBajas),
         total: bajasTotal,
       },
       payment: {
-        data: rAbonos,
+        data: hydrate(rAbonos),
         total: abonosTotal,
       },
       balances: {

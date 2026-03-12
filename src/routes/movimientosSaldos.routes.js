@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const saldosSocios = require("../models/movimientosSaldos");
+const { attachPartnerNames } = require("../utils/attach-partner-names");
 
 // Registro de saldosSocios
 router.post("/registro", async (req, res) => {
@@ -32,7 +33,10 @@ router.get("/listar", async (req, res) => {
   await saldosSocios
     .find({ tipo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -42,7 +46,10 @@ router.get("/listarPeriodo", async (req, res) => {
   await saldosSocios
     .find({ tipo, periodo })
     .sort({ _id: -1 })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -78,7 +85,10 @@ router.get("/listarPaginando", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -94,7 +104,10 @@ router.get("/listarPaginandoxTipo", async (req, res) => {
     .sort({ _id: -1 })
     .skip(skip)
     .limit(limite)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -127,7 +140,10 @@ router.get("/obtener/:id", async (req, res) => {
   // console.log("buscando")
   await saldosSocios
     .findById(id)
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
@@ -137,7 +153,10 @@ router.get("/obtenerxFicha/:fichaSocio", async (req, res) => {
 
   await saldosSocios
     .find({ fichaSocio })
-    .then((data) => res.json(data))
+    .then(async (data) => {
+      const hydratedData = await attachPartnerNames(data);
+      res.json(hydratedData);
+    })
     .catch((error) => res.json({ message: error }));
 });
 
