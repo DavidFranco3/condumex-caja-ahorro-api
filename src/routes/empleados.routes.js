@@ -86,7 +86,7 @@ router.get("/obtenerxFicha/:ficha", verifyToken, async (req, res) => {
   const { ficha } = req.params;
 
   await empleados
-    .find({ ficha: parseInt(ficha), estado: { $ne: "false" } })
+    .find({ ficha: parseInt(ficha) })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
@@ -96,7 +96,7 @@ router.get("/obtenerNombrexFicha/:ficha", verifyToken, async (req, res) => {
   const { ficha } = req.params;
 
   await empleados
-    .findOne({ ficha: parseInt(ficha), estado: { $ne: "false" } })
+    .findOne({ ficha: parseInt(ficha) })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
@@ -106,7 +106,7 @@ router.get("/obtenerxCoincidenciasNombre/:coincidencia", verifyToken, async (req
   const { coincidencia } = req.params;
   console.log(coincidencia);
   await empleados
-    .find({ estado: { $ne: "false" }, $or: [{ nombre: new RegExp(coincidencia, "i") }] })
+    .find({ $or: [{ nombre: new RegExp(coincidencia, "i") }] })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 }
@@ -117,10 +117,7 @@ router.get("/obtenerByNombre", verifyToken, async (req, res) => {
   const { nombre } = req.query;
   await empleados
     .find({
-      $and: [
-        { estado: { $ne: "false" } },
-        { nombre: { $regex: nombre, $options: "i" } },
-      ],
+      nombre: { $regex: nombre, $options: "i" },
     })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));

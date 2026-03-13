@@ -41,7 +41,7 @@ router.get("/totalGeneralByRazon", async (req, res) => {
     } else {
       activeSociosModel = sociosEspeciales;
     }
-    const activeDocs = await activeSociosModel.find({ estado: { $ne: "false" } }, { ficha: 1 });
+    const activeDocs = await activeSociosModel.find({}, { ficha: 1 });
     const activeFichas = activeDocs.map(doc => parseInt(doc.ficha)).filter(f => !isNaN(f));
 
     const result = await rendimientos.aggregate([
@@ -136,7 +136,7 @@ router.get("/totalGeneralBySocios", async (req, res) => {
     } else {
       activeSociosModel = sociosEspeciales;
     }
-    const activeDocs = await activeSociosModel.find({ estado: { $ne: "false" } }, { ficha: 1 });
+    const activeDocs = await activeSociosModel.find({}, { ficha: 1 });
     const activeFichas = activeDocs.map(doc => parseInt(doc.ficha)).filter(f => !isNaN(f));
 
     const result = await rendimientos.aggregate([
@@ -307,6 +307,22 @@ router.post("/registro", async (req, res) => {
       .status(401)
       .json({ mensaje: "Ya existe una rendimiento con este numero de folio" });
   } else {
+    // Validar que el socio no este de baja
+    const { fichaSocio, tipo } = req.body;
+    let modelSocio;
+    if (tipo === "Asociación de Empleados Sector Cables A.C.") {
+      modelSocio = empleados;
+    } else if (tipo === "Sindicato de Obreros del Sector Cables" || tipo === "Asociación de Trabajadores Sindicalizados en Telecomunicaciones A.C.") {
+      modelSocio = sindicalizados;
+    } else {
+      modelSocio = sociosEspeciales;
+    }
+
+    const socio = await modelSocio.findOne({ ficha: parseInt(fichaSocio) });
+    if (socio && socio.estado === "false") {
+      return res.status(403).json({ mensaje: "No se puede registrar rendimientos para un socio de baja" });
+    }
+
     const rendimientosRegistrar = rendimientos(req.body);
     await rendimientosRegistrar
       .save()
@@ -329,6 +345,22 @@ router.post("/registro2", async (req, res) => {
       .status(401)
       .json({ mensaje: "Ya existe una rendimiento con este numero de folio" });
   } else {
+    // Validar que el socio no este de baja
+    const { tipo } = req.body;
+    let modelSocio;
+    if (tipo === "Asociación de Empleados Sector Cables A.C.") {
+      modelSocio = empleados;
+    } else if (tipo === "Sindicato de Obreros del Sector Cables" || tipo === "Asociación de Trabajadores Sindicalizados en Telecomunicaciones A.C.") {
+      modelSocio = sindicalizados;
+    } else {
+      modelSocio = sociosEspeciales;
+    }
+
+    const socio = await modelSocio.findOne({ ficha: parseInt(fichaSocio) });
+    if (socio && socio.estado === "false") {
+      return res.status(403).json({ mensaje: "No se puede registrar rendimientos para un socio de baja" });
+    }
+
     const rendimientosRegistrar = rendimientos(req.body);
     await rendimientosRegistrar
       .save()

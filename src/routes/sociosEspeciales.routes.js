@@ -86,7 +86,7 @@ router.get("/obtenerxFicha/:ficha", verifyToken, async (req, res) => {
   const { ficha } = req.params;
 
   await sociosEspeciales
-    .find({ ficha: parseInt(ficha), estado: { $ne: "false" } })
+    .find({ ficha: parseInt(ficha) })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
@@ -96,7 +96,6 @@ router.get("/obtenerByNombre", verifyToken, async (req, res) => {
   const { nombre } = req.query;
   await sociosEspeciales
     .find({
-      estado: { $ne: "false" },
       nombre: { $regex: nombre, $options: "i" },
     })
     .then((data) => res.json(data))
@@ -111,7 +110,7 @@ router.get(
     const { coincidencia } = req.params;
 
     await sociosEspeciales
-      .find({ estado: { $ne: "false" }, $or: [{ nombre: `/${coincidencia}/i` }] })
+      .find({ $or: [{ nombre: new RegExp(coincidencia, "i") }] })
       .then((data) => res.json(data))
       .catch((error) => res.json({ message: error }));
   }

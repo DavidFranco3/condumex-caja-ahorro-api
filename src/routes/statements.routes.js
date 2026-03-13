@@ -14,6 +14,7 @@ const prestamos = require("../models/prestamos");
 const retiros = require("../models/retiros");
 const empleados = require("../models/empleados");
 const socios = require("../models/sindicalizados");
+const sociosEspeciales = require("../models/sociosEspeciales");
 const abonos = require("../models/abonos");
 const { getStatementAccount } = require("../utils/get-statement-account");
 const { createStament } = require("../utils/stament-acounts");
@@ -216,20 +217,23 @@ router.get("/socio", verifyToken, async (req, res) => {
     const socio = await socios.findOne({
       $and: paramFindSocio,
     });
+    const socioEspecial = await sociosEspeciales.findOne({
+      $and: paramFindSocio,
+    });
 
-    if (!empleado && !socio) {
+    if (!empleado && !socio && !socioEspecial) {
       return res.status(400).json({
         message: "El socio no existe",
       });
     }
 
-    const associate = empleado || socio;
+    const associate = empleado || socio || socioEspecial;
 
-    if (associate.estado === "false") {
+    /* if (associate.estado === "false") {
       return res.status(400).json({
         message: "El socio se encuentra dado de baja",
       });
-    }
+    } */
 
     const statement = await getStatementAccount(associate, periodo);
 
@@ -279,19 +283,23 @@ router.get("/pdf/:fichaSocio", async (req, res) => {
       $and: paramFindSocio,
     });
 
-    if (!empleado && !socio) {
+    const socioEspecial = await sociosEspeciales.findOne({
+      $and: paramFindSocio,
+    });
+
+    if (!empleado && !socio && !socioEspecial) {
       return res.status(400).json({
         message: "El socio no existe",
       });
     }
 
-    const associate = empleado || socio;
+    const associate = empleado || socio || socioEspecial;
 
-    if (associate.estado === "false") {
+    /* if (associate.estado === "false") {
       return res.status(400).json({
         message: "El socio se encuentra dado de baja",
       });
-    }
+    } */
 
     const statement = await getStatementAccount(associate, periodo);
 
@@ -346,18 +354,22 @@ router.get("/email/:fichaSocio", verifyToken, async (req, res) => {
     const socio = await socios.findOne({
       $and: paramFindSocio,
     });
+    const socioEspecial = await sociosEspeciales.findOne({
+      $and: paramFindSocio,
+    });
 
-    if (!empleado && !socio) {
+    if (!empleado && !socio && !socioEspecial) {
       return res.status(400).json({
         message: "El socio no existe",
       });
     }
 
-    const associate = empleado || socio;
+    const associate = empleado || socio || socioEspecial;
 
     if (associate.estado === "false") {
       return res.status(200).json({
-        message: "Socio inactivo, correo omitido",
+        mensaje: "Socio inactivo, correo omitido",
+        skip: true
       });
     }
 
